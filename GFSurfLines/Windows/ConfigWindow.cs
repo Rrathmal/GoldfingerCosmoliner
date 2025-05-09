@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using NAudio.Wave;
@@ -56,7 +55,7 @@ public class ConfigWindow : Window, IDisposable
         }
 
         var movable = Configuration.Volume;
-        if(ImGui.DragInt("Volume: ", ref movable, 1f, 1,100))
+        if(ImGui.DragInt("Volume", ref movable, 1f, 1,100))
         {
             Configuration.Volume = movable;
             if(parent.SoundOut != null)

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using NAudio.Wave;
 using System.Threading;
 using Dalamud.Interface.Animation.EasingFunctions;
+using System.Collections.Generic;
 
 namespace GFSurfLines;
 
@@ -59,7 +60,7 @@ public sealed class Plugin : IDalamudPlugin
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "A useful message to display in /xlhelp"
+            HelpMessage = "Opens the configuration menu."
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
@@ -68,37 +69,32 @@ public sealed class Plugin : IDalamudPlugin
         // to toggle the display status of the configuration ui
         PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
 
-        // Add a simple message to the log with level set to information
-        // Use /xllog to open the log window in-game
-        // Example Output: 00:57:54.959 | INF | [SamplePlugin] ===A cool log message from Sample Plugin===
-        Log.Information($"===A cool log message from {PluginInterface.Manifest.Name}===");
+        Log.Information($"===yo waddup===");
 
         Condition.ConditionChange += ConditionOnChange;
     }
 
-    private void FrameworkOnUpdate(IFramework framework)
-    {
-        
-    }
-
     private void ConditionOnChange(ConditionFlag flag, bool value)
     {
-        if (flag == ConditionFlag.Unknown101)
+        if (Configuration.ValidMaps.Contains(ClientState.MapId))
         {
-            flag101 = value;
-        }
-        else if (flag101 && flag == ConditionFlag.InFlight)
-        {
-            switch (value)
+            if (flag == ConditionFlag.Unknown101)
             {
-                case true:
-                    //Unknown 101 has started
-                    PlaySound();
-                    break;
-                case false:
-                    //Unknown 101 has ended
-                    SoundOut.Pause();
-                    break;
+                flag101 = value;
+            }
+            else if (flag101 && flag == ConditionFlag.InFlight)
+            {
+                switch (value)
+                {
+                    case true:
+                        //Unknown 101 has started
+                        PlaySound();
+                        break;
+                    case false:
+                        //Unknown 101 has ended
+                        SoundOut.Pause();
+                        break;
+                }
             }
         }
     }
