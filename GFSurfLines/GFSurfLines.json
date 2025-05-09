@@ -1,0 +1,11 @@
+{
+  "Author": "Rrathmal",
+  "Name": "Goldfinger Cosmoliner",
+  "Punchline": "Plays Superman by Goldfinger when using the Cosmoliner",
+  "Description": "Starts and stops playing Superman by Goldfinger whenever riding the Cosmoliner. Because I'm a superman.",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "plugin",
+    "music"
+  ]
+}
