@@ -45,7 +45,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 if (parent.SoundOut != null)
                 {
-                    parent.SoundOut.Stop();
+                    parent.TrueStop();
                     parent.SoundOut.Dispose();
                     parent.SoundOut = null;
                 }
@@ -63,7 +63,7 @@ public class ConfigWindow : Window, IDisposable
                 bool wasRunning = false;
                 if(parent.SoundOut.PlaybackState == PlaybackState.Playing)
                 {
-                    parent.SoundOut.Stop();
+                    parent.TrueStop();
                     wasRunning = true;
                 }
                 parent.SoundOut.Dispose();

@@ -36,6 +36,7 @@ public sealed class Plugin : IDalamudPlugin
     private string? soundFileMp3 { get; set; }
     public DirectSoundOut? SoundOut;
     private bool flag101 = false;
+    private bool flying = false;
 
     public Plugin()
     {
@@ -87,11 +88,13 @@ public sealed class Plugin : IDalamudPlugin
                 switch (value)
                 {
                     case true:
-                        //Unknown 101 has started
+                        //ConditionFlag.InFlight has started
+                        flying = true;
                         PlaySound();
                         break;
                     case false:
-                        //Unknown 101 has ended
+                        //ConditionFlag.InFlight has ended
+                        flying = false;
                         SoundOut.Pause();
                         break;
                 }
@@ -99,44 +102,54 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
+    
     public void PlaySound()
     {
         Task.Run(() =>
         {
-            WaveStream reader;
-
             try
             {
-                reader = new MediaFoundationReader(soundFileWav);
+                if (SoundOut == null)
+                {
+                    InitAudio();
+                }
+                SoundOut.Play();
             }
             catch
             {
-                Log.Error("Failed read sound file", soundFileWav);
+                Log.Error("Failed play audio");
                 return;
             }
-
-            var audioStream = new WaveChannel32(reader)
-            {
-                Volume = Configuration.Volume / 100f
-            };
-            using (reader)
-            {
-                try
-                {
-                    if (SoundOut == null)
-                    {
-                        SoundOut = new DirectSoundOut();
-                        SoundOut.Init(audioStream);
-                    }
-                    SoundOut.Play();
-                }
-                catch
-                {
-                    Log.Error("Failed play sound");
-                    return;
-                }
-            }
         });
+    }
+
+    private void SoundOut_PlaybackStopped(object? sender, StoppedEventArgs e)
+    {
+        if (flying)
+        {
+            //Song has ended, loop
+            SoundOut.Dispose();
+            SoundOut = null;
+            PlaySound();
+        }
+    }
+
+    private void InitAudio()
+    {
+        if(SoundOut != null)
+        {
+            TrueStop();
+            SoundOut.Dispose();
+        }
+        WaveStream reader = new MediaFoundationReader(soundFileWav);
+        var audioStream = new WaveChannel32(reader)
+        {
+            Volume = Configuration.Volume / 100f,
+            PadWithZeroes = false
+        };
+        SoundOut = new DirectSoundOut();
+        SoundOut.Init(audioStream);
+        SoundOut.PlaybackStopped += SoundOut_PlaybackStopped;
     }
 
     public void Dispose()
@@ -148,6 +161,18 @@ public sealed class Plugin : IDalamudPlugin
         CommandManager.RemoveHandler(CommandName);
 
         Condition.ConditionChange -= ConditionOnChange;
+
+        if (SoundOut != null)
+        {
+            TrueStop();
+            SoundOut.Dispose();
+        }
+    }
+
+    public void TrueStop()
+    {
+        SoundOut.PlaybackStopped -= SoundOut_PlaybackStopped;
+        SoundOut.Stop();
     }
 
     private void OnCommand(string command, string args)
