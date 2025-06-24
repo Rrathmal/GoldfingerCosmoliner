@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/12.0.2">
   <PropertyGroup>
-    <Version>1.0.3.0</Version>
+    <Version>1.0.3.1</Version>
     <Description>Starts and stops playing Superman by Goldfinger whenever riding the Cosmoliner. Because I'm a superman..</Description>
     <PackageProjectUrl>https://github.com/Rrathmal/GoldfingerCosmoliner</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
